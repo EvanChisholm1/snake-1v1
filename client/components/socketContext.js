@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import io from 'socket.io-client';
 
 const socket = io('http://localhost:4000');
@@ -10,16 +10,23 @@ export const SocketProvider = ({ children }) => {
     roomId: null,
   });
 
-  socket.on('connect', () => {
-    console.log('connected to socket');
-  });
-
-  socket.on('roomid', roomId => {
-    setUser({
-      ...user,
-      roomId: roomId,
+  useEffect(() => {
+    socket.on('connect', () => {
+      console.log('connected to socket');
     });
-  });
+
+    socket.on('roomid', roomId => {
+      setUser({
+        ...user,
+        roomId: roomId,
+      });
+    });
+
+    return () => {
+      socket.off('roomid');
+      socket.off('connect');
+    };
+  }, [user]);
 
   const joinRoom = roomId => {
     socket.emit('join room', roomId);
