@@ -44,23 +44,37 @@ export const ClientSnake = () => {
       );
 
       while (trail.current.length > score) trail.current.pop();
-      // console.log(trail.current);
+
+      const { x, y } = headCoords.current;
 
       for (let i = 0; i < trail.current.length; i++) {
-        // console.log('drawing a cell');
         ctx.fillStyle = '#00ff00';
         const cell = trail.current[i];
-        // console.log(cell);
+        if (cell.x === x && cell.y === y) {
+          setScore(3);
+        }
         ctx.fillRect(cell.x * tileSize, cell.y * tileSize, tileSize, tileSize);
       }
 
-      trail.current.unshift(headCoords.current);
-      const { x, y } = headCoords.current;
+      if (x > gridSize - 1) {
+        headCoords.current.x = 0;
+      }
+      if (y > gridSize - 1) {
+        headCoords.current.y = 0;
+      }
+      if (x < 0) {
+        headCoords.current.x = gridSize - 1;
+      }
+      if (y < 0) {
+        headCoords.current.y = gridSize - 1;
+      }
 
       headCoords.current = {
-        x: x + dir.current.x,
-        y: y + dir.current.y,
+        x: headCoords.current.x + dir.current.x,
+        y: headCoords.current.y + dir.current.y,
       };
+
+      trail.current.unshift(headCoords.current);
 
       if (x === appleCoords.current.x && y === appleCoords.current.y) {
         setScore(score + 1);
