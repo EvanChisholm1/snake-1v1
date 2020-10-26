@@ -1,17 +1,25 @@
 import { useEffect, useRef, useState } from 'react';
 
+const gridSize = 25;
+
 // the current players game
 export const ClientSnake = () => {
-  const [score, setScore] = useState(10);
+  const [score, setScore] = useState(3);
   const trail = useRef([]);
   const canvas = useRef(null);
   const headCoords = useRef({ x: 0, y: 0 });
   const dir = useRef({ x: 0, y: 0 });
+  const appleCoords = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const appleX = Math.floor(Math.random() * gridSize);
+    const appleY = Math.floor(Math.random() * gridSize);
+    appleCoords.current = { x: appleX, y: appleY };
+  }, []);
 
   useEffect(() => {
     const ctx = canvas.current.getContext('2d');
     const { width, height } = canvas.current;
-    const gridSize = 20;
     const tileSize = width / gridSize;
 
     ctx.fillStyle = '#000000';
@@ -20,8 +28,14 @@ export const ClientSnake = () => {
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, width, height);
 
+      ctx.fillStyle = '#ff0000';
+      ctx.fillRect(
+        appleCoords.current.x * tileSize,
+        appleCoords.current.y * tileSize,
+        tileSize,
+        tileSize
+      );
       ctx.fillStyle = '#00ff00';
-      ctx.fillRect(10 * tileSize, 10 * tileSize, tileSize, tileSize);
       ctx.fillRect(
         headCoords.current.x * tileSize,
         headCoords.current.y * tileSize,
@@ -48,8 +62,11 @@ export const ClientSnake = () => {
         y: y + dir.current.y,
       };
 
-      if (x === 10 && y === 10) {
+      if (x === appleCoords.current.x && y === appleCoords.current.y) {
         setScore(score + 1);
+        const appleX = Math.floor(Math.random() * gridSize);
+        const appleY = Math.floor(Math.random() * gridSize);
+        appleCoords.current = { x: appleX, y: appleY };
       }
     }, 1000 / 15);
 
