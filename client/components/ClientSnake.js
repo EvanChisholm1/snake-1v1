@@ -33,13 +33,6 @@ export const ClientSnake = () => {
         tileSize,
         tileSize
       );
-      ctx.fillStyle = '#00ff00';
-      ctx.fillRect(
-        headCoords.current.x * tileSize,
-        headCoords.current.y * tileSize,
-        tileSize,
-        tileSize
-      );
 
       while (trail.current.length > score) trail.current.pop();
 
@@ -83,18 +76,21 @@ export const ClientSnake = () => {
     }, 1000 / 15);
 
     const keyHandler = e => {
-      // console.log(e.key);
       switch (e.key) {
         case 'ArrowRight':
+          if (dir.current.x === -1) return;
           dir.current = { x: 1, y: 0 };
           break;
         case 'ArrowLeft':
+          if (dir.current.x === 1) return;
           dir.current = { x: -1, y: 0 };
           break;
         case 'ArrowUp':
+          if (dir.current.y === 1) return;
           dir.current = { x: 0, y: -1 };
           break;
         case 'ArrowDown':
+          if (dir.current.y === -1) return;
           dir.current = { x: 0, y: 1 };
           break;
         default:
@@ -109,5 +105,10 @@ export const ClientSnake = () => {
     };
   }, [score]);
 
-  return <canvas ref={canvas} width={500} height={500} />;
+  return (
+    <div>
+      <h2>You're score is {score}</h2>
+      <canvas ref={canvas} width={500} height={500} />
+    </div>
+  );
 };
