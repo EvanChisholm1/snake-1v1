@@ -22,8 +22,6 @@ export const ClientSnake = () => {
     const { width, height } = canvas.current;
     const tileSize = width / gridSize;
 
-    ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, width, height);
     const gameInterval = setInterval(() => {
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, width, height);
@@ -69,12 +67,12 @@ export const ClientSnake = () => {
         headCoords.current.y = gridSize - 1;
       }
 
+      trail.current.unshift(headCoords.current);
+
       headCoords.current = {
         x: headCoords.current.x + dir.current.x,
         y: headCoords.current.y + dir.current.y,
       };
-
-      trail.current.unshift(headCoords.current);
 
       if (x === appleCoords.current.x && y === appleCoords.current.y) {
         setScore(score + 1);
