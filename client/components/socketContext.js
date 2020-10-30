@@ -1,14 +1,16 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import {createContext, useContext, useEffect, useState} from 'react';
 import io from 'socket.io-client';
 
 const socket = io('http://localhost:4000');
 export const SocketContext = createContext();
 
-export const SocketProvider = ({ children }) => {
+export const SocketProvider = ({children}) => {
   const [user, setUser] = useState({
     name: 'SnakeBoi',
     roomId: null,
   });
+
+  const [isGameRunning, setGameRunning] = useState(false);
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -22,9 +24,18 @@ export const SocketProvider = ({ children }) => {
       });
     });
 
+    socket.on('gamestart', () => {
+      setGameRunning(true);
+    })
+
+    socket.on('gameend', () => {
+      setGameRunning(false);
+    })
+
     return () => {
       socket.off('roomid');
       socket.off('connect');
+      socket.off('gamestart');
     };
   }, [user]);
 
@@ -37,7 +48,7 @@ export const SocketProvider = ({ children }) => {
   };
 
   return (
-    <SocketContext.Provider value={{ joinRoom, createRoom, user }}>
+    <SocketContext.Provider value={{joinRoom, createRoom, user}}>
       {children}
     </SocketContext.Provider>
   );

@@ -1,8 +1,10 @@
-import { useState } from 'react';
-import { useSocketContext } from '../components/socketContext';
+import {useState} from 'react';
+import {useSocketContext} from '../components/socketContext';
+import {useRouter} from 'next/router';
 
 export default function Game() {
-  const { joinRoom } = useSocketContext();
+  const {joinRoom} = useSocketContext();
+  const router = useRouter();
   const [roomCode, setRoomCode] = useState('');
 
   const handleInput = e => {
@@ -12,7 +14,9 @@ export default function Game() {
   const handleCodeSubmit = e => {
     e.preventDefault();
     joinRoom(roomCode);
+    router.push('/game');
   };
+
   return (
     <div>
       <form onSubmit={handleCodeSubmit}>

@@ -1,5 +1,5 @@
 const express = require('express');
-const { v4: uuid } = require('uuid');
+const {v4: uuid} = require('uuid');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
@@ -54,10 +54,18 @@ io.on('connection', socket => {
     console.log(`${user.name} is joining game: ${roomId}`);
     socket.to(roomIndex).emit('new player', user.name);
     socket.join(roomId);
+    socket.emit('roomid', rooms[roomIndex].id);
+
+    if (rooms[roomIndex].players.length === 2) {
+      socket.to(roomId).emit('start count');
+      setTimeout(() => {
+        socket.to(roomId).emit('gamestart');
+      }, 3000)
+    }
   });
 
-  socket.on('player move', ({ coords }) => {
-    socket.to(user.roomId).emit('player move', { coords });
+  socket.on('player move', ({coords}) => {
+    socket.to(user.roomId).emit('player move', {coords});
   });
 });
 
@@ -65,3 +73,4 @@ io.on('connection', socket => {
 http.listen(process.env.PORT || 4000, () => {
   console.log('listening on port 4000');
 });
+
