@@ -9,6 +9,7 @@ export const SocketProvider = ({children}) => {
     name: 'SnakeBoi',
     roomId: null,
   });
+  const [opponentTrail, setOpponentTrail] = useState([]);
 
   const [isGameRunning, setGameRunning] = useState(false);
 
@@ -32,6 +33,11 @@ export const SocketProvider = ({children}) => {
       setGameRunning(false);
     })
 
+    socket.on('pos', (pos) => {
+      console.log(pos)
+      setOpponentTrail(pos);
+    });
+
     return () => {
       socket.off('roomid');
       socket.off('connect');
@@ -47,8 +53,12 @@ export const SocketProvider = ({children}) => {
     socket.emit('new room');
   };
 
+  const emitPos = (trail) => {
+    socket.emit('pos', trail);
+  }
+
   return (
-    <SocketContext.Provider value={{joinRoom, createRoom, user}}>
+    <SocketContext.Provider value={{opponentTrail, joinRoom, createRoom, user, emitPos, isGameRunning}}>
       {children}
     </SocketContext.Provider>
   );

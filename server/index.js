@@ -64,8 +64,9 @@ io.on('connection', socket => {
     }
   });
 
-  socket.on('player move', ({coords}) => {
-    socket.to(user.roomId).emit('player move', {coords});
+  socket.on('pos', (pos) => {
+    // console.log(pos);
+    socket.to(user.roomId).emit('pos', pos);
   });
 });
 
